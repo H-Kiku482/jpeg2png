@@ -53,7 +53,7 @@ pub fn main(args: &Vec<String>) {
             println!("\tsrc: {}", source_path.to_str().unwrap());
             println!("\tdst: {}", &dest_path.to_str().unwrap());
 
-            if cmd::dupliceate(source_path, &dest_path) {
+            if cmd::duplicate(source_path, &dest_path) {
                 println!("\x1b[32mSucceed\x1b[0m");
             } else {
                 cmd::failed_message(source_path);
@@ -121,7 +121,7 @@ pub fn main(args: &Vec<String>) {
                         break;
                     }
                 }
-                if cmd::dupliceate(sub.path(), &dest_path) {
+                if cmd::duplicate(sub.path(), &dest_path) {
                     println!("\x1b[32mSucceed\x1b[0m");
                 } else {
                     return cmd::failed_message(source_path);
