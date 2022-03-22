@@ -21,7 +21,7 @@ pub fn get_random_string() -> String {
     s
 }
 
-pub fn dupliceate(src: &Path, dest: &Path) -> bool {
+pub fn duplicate(src: &Path, dest: &Path) -> bool {
     let source_image = match ImageReader::open(src) {
         Ok(r) => match r.with_guessed_format() {
             Ok(i) => i,
