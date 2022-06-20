@@ -15,6 +15,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "aae1277d39aeec15cb388266ecc24b11c80469deae6067e17a1a7aa9e5c1f234"
 
 [[package]]
+name = "any2png"
+version = "0.1.0"
+dependencies = [
+ "image",
+ "rand",
+ "walkdir",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -264,15 +273,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "105fb082d64e2100074587f59a74231f771750c664af903f1f9f76c9dedfc6f1"
 dependencies = [
  "rayon",
-]
-
-[[package]]
-name = "jpeg2png"
-version = "0.1.0"
-dependencies = [
- "image",
- "rand",
- "walkdir",
 ]
 
 [[package]]
