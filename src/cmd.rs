@@ -1,5 +1,4 @@
 use image::io::Reader as ImageReader;
-use image::ImageFormat;
 use rand::Rng;
 use std::path::Path;
 
@@ -33,17 +32,6 @@ pub fn duplicate(src: &Path, dest: &Path) -> bool {
             return false;
         }
     };
-
-    let img_format = match source_image.format() {
-        Some(f) => f,
-        None => {
-            return false;
-        }
-    };
-
-    if img_format != ImageFormat::Jpeg {
-        return false;
-    }
 
     let decoded = match source_image.decode() {
         Ok(d) => d,
