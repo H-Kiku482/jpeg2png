@@ -1,4 +1,4 @@
-extern crate jpeg2png;
+extern crate any2png;
 
 use std::env;
 
@@ -7,5 +7,5 @@ fn main() {
     if args.len() == 0 {
         return;
     }
-    jpeg2png::main(&args);
+    any2png::main(&args);
 }

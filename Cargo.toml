@@ -1,5 +1,5 @@
 [package]
-name = "jpeg2png"
+name = "any2png"
 version = "0.1.0"
 edition = "2021"
 
