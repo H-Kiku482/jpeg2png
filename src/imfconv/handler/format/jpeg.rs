@@ -1,5 +1,5 @@
 use super::ImfconvHandler;
-use std::{error::Error, path::Path};
+use std::{error::Error, fmt::Error as FmtError, path::Path};
 
 pub struct JpegHandler;
 impl ImfconvHandler for JpegHandler {
@@ -10,7 +10,10 @@ impl ImfconvHandler for JpegHandler {
         raw_image: &[u8],
         dest_filepath: &Path,
     ) -> Result<(), Box<dyn Error>> {
-        let raw_image = image::RgbImage::from_vec(width, height, raw_image.to_vec()).unwrap();
+        let raw_image = match image::RgbImage::from_vec(width, height, raw_image.to_vec()) {
+            Some(i) => i,
+            None => return Err(Box::new(FmtError)),
+        };
 
         let dest_filepath = dest_filepath.with_extension("jpeg");
         let decoded_image = image::DynamicImage::from(raw_image);
