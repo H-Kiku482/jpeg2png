@@ -153,7 +153,7 @@ mod tests {
 
     #[test]
     fn jpg_to_png() {
-        let image_builder = match Imfconv::new(Path::new("test/1.jpeg"), Path::new("test/result")) {
+        match Imfconv::new(Path::new("test/1.jpeg"), Path::new("test/result")) {
             Ok(img) => img,
             Err(e) => panic!("{}", e),
         };
