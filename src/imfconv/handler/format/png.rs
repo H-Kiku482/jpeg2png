@@ -37,7 +37,7 @@ mod test {
             Err(e) => panic!("{}", e),
         };
 
-        let dest_filepath = Path::new("test/result");
+        let dest_filepath = Path::new("test/result.png");
 
         let handler = Box::new(PngHandler);
         match handler.exec(
