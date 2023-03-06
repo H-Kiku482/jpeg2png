@@ -1,6 +1,6 @@
 use std::{error::Error, path::Path};
 
-use clap::{error::ErrorKind, Arg, Command};
+use clap::{Arg, Command};
 use imfconv::imfconv::{ColorProfile, ImageType};
 
 mod directory;
@@ -113,29 +113,40 @@ pub fn run() {
     };
 
     for source_path in source_pathes {
-        let output_path: &str = match command.get_one::<String>(OsArgsId::OUTPUT_FILE_PATH) {
+        let output: &str = match command.get_one::<String>(OsArgsId::OUTPUT_FILE_PATH) {
             Some(item) => item,
             None => "",
         };
 
-        let output_path = match output_path {
-            "" => {
-                let p = Path::new(&source_path).with_extension(&extension);
-                let p = p.to_str();
-                match p {
-                    Some(s) => String::from(s),
-
-                    None => String::new(),
+        let (handler, output_path): (Box<dyn CliImfconv>, String) =
+            if Path::new(source_path).is_dir() {
+                match output {
+                    "" => {
+                        let mut output_dir = String::from(source_path);
+                        output_dir.push_str("_");
+                        output_dir.push_str(&extension);
+                        let p = Path::new(&output_dir);
+                        let p = p.to_str();
+                        match p {
+                            Some(s) => (Box::new(directory::AsDirectory), String::from(s)),
+                            None => (Box::new(directory::AsDirectory), String::new()),
+                        }
+                    }
+                    _ => (Box::new(directory::AsDirectory), String::new()),
                 }
-            }
-            _ => String::new(),
-        };
-
-        let handler: Box<dyn CliImfconv> = if Path::new(source_path).is_dir() {
-            Box::new(directory::AsDirectory)
-        } else {
-            Box::new(file::AsFile)
-        };
+            } else {
+                match output {
+                    "" => {
+                        let p = Path::new(&source_path).with_extension(&extension);
+                        let p = p.to_str();
+                        match p {
+                            Some(s) => (Box::new(file::AsFile), String::from(s)),
+                            None => (Box::new(file::AsFile), String::new()),
+                        }
+                    }
+                    _ => (Box::new(file::AsFile), String::new()),
+                }
+            };
 
         match handler.exec(source_path, &output_path, &format, &profile) {
             Ok(_) => continue,
