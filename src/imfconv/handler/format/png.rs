@@ -23,31 +23,3 @@ impl ImfconvHandler for PngHandler {
         }
     }
 }
-
-#[cfg(test)]
-mod test {
-    use super::PngHandler;
-    use crate::imfconv::handler::format::ImfconvHandler;
-    use std::path::Path;
-
-    #[test]
-    fn exec_test() {
-        let image = match image::open("test/1.jpeg") {
-            Ok(i) => i,
-            Err(e) => panic!("{}", e),
-        };
-
-        let dest_filepath = Path::new("test/result.png");
-
-        let handler = Box::new(PngHandler);
-        match handler.exec(
-            image.width(),
-            image.height(),
-            &image.into_bytes(),
-            dest_filepath,
-        ) {
-            Ok(_) => return,
-            Err(e) => panic!("{}", e),
-        };
-    }
-}

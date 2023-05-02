@@ -45,7 +45,6 @@ struct ImageColorProfile;
 impl ImageColorProfile {
     const GRAYSCALE: &str = "grayscale";
     const RGB: &str = "rgb";
-    const RGBA: &str = "rgba";
 }
 
 /// execute imfconv for cli
@@ -75,11 +74,7 @@ pub fn run() {
                 .short('c')
                 .help("Image color profile.")
                 .ignore_case(true)
-                .value_parser([
-                    ImageColorProfile::GRAYSCALE,
-                    ImageColorProfile::RGB,
-                    ImageColorProfile::RGBA,
-                ])
+                .value_parser([ImageColorProfile::GRAYSCALE, ImageColorProfile::RGB])
                 .default_value(ImageColorProfile::RGB),
         )
         .arg(
@@ -111,7 +106,6 @@ pub fn run() {
         Some(p) => match p.as_str() {
             ImageColorProfile::GRAYSCALE => ColorProfile::GRAYSCALE,
             ImageColorProfile::RGB => ColorProfile::RGB,
-            ImageColorProfile::RGBA => ColorProfile::RGBA,
             _ => ColorProfile::RGB,
         },
         None => ColorProfile::RGB,

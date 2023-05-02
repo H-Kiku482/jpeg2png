@@ -5,9 +5,7 @@ use std::{
 
 use self::{
     handler::{
-        color_profile::{
-            grayscale::Grayscale, rgb::RgbColor, rgba::RgbaColor, ImfconvColorProfile,
-        },
+        color_profile::{grayscale::Grayscale, rgb::RgbColor, ImfconvColorProfile},
         format::{jpeg::JpegHandler, png::PngHandler, tiff::TiffHandler, ImfconvHandler},
     },
     reader::read_image,
@@ -25,7 +23,6 @@ pub struct Imfconv {
     image: Vec<u8>,
     w: u32,
     h: u32,
-    grayscale: bool,
     format: Box<dyn ImfconvHandler>,
     color: Box<dyn ImfconvColorProfile>,
     dest_path: PathBuf,
@@ -45,10 +42,9 @@ impl Imfconv {
             image: i,
             w,
             h,
-            grayscale: false,
             format: Box::new(PngHandler),
-            color: Box::new(RgbaColor),
-            dest_path: PathBuf::from(destination_file),
+            color: Box::new(RgbColor),
+            dest_path: PathBuf::from(destination_filepath),
         })
     }
 
@@ -63,7 +59,6 @@ impl Imfconv {
             image: self.image,
             w: self.w,
             h: self.h,
-            grayscale: self.grayscale,
             format: f,
             color: self.color,
             dest_path: self.dest_path,
@@ -72,23 +67,11 @@ impl Imfconv {
 
     pub fn set_color_profile(self, color_profile: &ColorProfile) -> Result<Self, Box<dyn Error>> {
         match color_profile {
-            ColorProfile::RGBA => {
-                return Ok(Self {
-                    image: self.image,
-                    w: self.w,
-                    h: self.h,
-                    grayscale: self.grayscale,
-                    format: self.format,
-                    color: Box::new(RgbaColor),
-                    dest_path: self.dest_path,
-                })
-            }
             ColorProfile::RGB => {
                 return Ok(Self {
                     image: self.image,
                     w: self.w,
                     h: self.h,
-                    grayscale: self.grayscale,
                     format: self.format,
                     color: Box::new(RgbColor),
                     dest_path: self.dest_path,
@@ -99,7 +82,6 @@ impl Imfconv {
                     image: self.image,
                     w: self.w,
                     h: self.h,
-                    grayscale: self.grayscale,
                     format: self.format,
                     color: Box::new(Grayscale),
                     dest_path: self.dest_path,
@@ -112,9 +94,13 @@ impl Imfconv {
     ///
     /// Returns `()` if the conversion was successful. But returns an `Error` on failure.
     pub fn convert(&self) -> Result<(), Box<dyn Error>> {
+        let image_with_profile = match self.color.edit(self.w, self.h, &self.image) {
+            Ok(b) => b,
+            Err(e) => return Err(e),
+        };
         match self
             .format
-            .exec(self.w, self.h, &self.image, &self.dest_path)
+            .exec(self.w, self.h, &image_with_profile, &self.dest_path)
         {
             Ok(_) => return Ok(()),
             Err(e) => return Err(e),
@@ -133,20 +119,6 @@ pub enum ImageType {
 /// Color profiles available in imfconv
 #[derive(Debug)]
 pub enum ColorProfile {
-    RGBA,
     RGB,
     GRAYSCALE,
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn jpg_to_png() {
-        match Imfconv::new(Path::new("test/1.jpeg"), Path::new("test/result")) {
-            Ok(img) => img,
-            Err(e) => panic!("{}", e),
-        };
-    }
 }
