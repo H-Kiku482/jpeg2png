@@ -12,6 +12,11 @@ const AUTHOR: &str = "hkiku482 <h.kikuchi482@gmail.com>";
 const ABOUT: &str = "Convert image format.";
 
 trait CliImfconv {
+    /// Image format conversion for file or directory.
+    /// - src: source file or directory path
+    /// - dest: destination file or directory path
+    /// - format: image format after conversion
+    /// - profile: image profile after conversion
     fn exec(
         &self,
         src: &str,
@@ -43,7 +48,9 @@ impl ImageColorProfile {
     const RGBA: &str = "rgba";
 }
 
+/// execute imfconv for cli
 pub fn run() {
+    // Parse os arguments.
     let command = Command::new(APP_NAME)
         .version(VERSION)
         .author(AUTHOR)
@@ -85,7 +92,6 @@ pub fn run() {
         )
         .get_matches();
 
-    // Parse os arguments.
     let source_pathes: Vec<&String> = match command.get_many::<String>(OsArgsId::SOURCE_ITEM_PATH) {
         Some(values) => values.collect(),
         None => return,
@@ -96,13 +102,13 @@ pub fn run() {
         None => ImageFormat::PNG,
     };
 
-    let format = match extension {
+    let format: ImageType = match extension {
         ImageFormat::JPEG => ImageType::JPEG,
         ImageFormat::TIFF => ImageType::TIFF,
         _ => ImageType::PNG,
     };
 
-    let profile = match command.get_one::<String>(OsArgsId::COLOR_PROFILE) {
+    let profile: ColorProfile = match command.get_one::<String>(OsArgsId::COLOR_PROFILE) {
         Some(p) => match p.as_str() {
             ImageColorProfile::GRAYSCALE => ColorProfile::GRAYSCALE,
             ImageColorProfile::RGB => ColorProfile::RGB,
@@ -150,7 +156,7 @@ pub fn run() {
 
         match handler.exec(source_path, &output_path, &format, &profile) {
             Ok(_) => continue,
-            Err(e) => eprint!("{}", e),
+            Err(e) => eprint!("{}\n", e),
         };
     }
 }

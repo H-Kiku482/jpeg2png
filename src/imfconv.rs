@@ -16,6 +16,11 @@ use self::{
 mod handler;
 mod reader;
 
+/// The image conversion library.
+/// This struct can be used as method chains.
+/// ```
+/// let imfconv = Imfconv::new(src, dest).set_image_format(itype);
+/// ```
 pub struct Imfconv {
     image: Vec<u8>,
     w: u32,
@@ -27,9 +32,10 @@ pub struct Imfconv {
 }
 
 impl Imfconv {
+    /// Making imfconv builder instance
     pub fn new(
         source_image_filepath: &Path,
-        destination_file: &Path,
+        destination_filepath: &Path,
     ) -> Result<Self, Box<dyn Error>> {
         let (w, h, i) = match read_image(source_image_filepath) {
             Ok((w, h, i)) => (w, h, i),
@@ -42,10 +48,11 @@ impl Imfconv {
             grayscale: false,
             format: Box::new(PngHandler),
             color: Box::new(RgbaColor),
-            dest_path: PathBuf::from(destination_file),
+            dest_path: PathBuf::from(destination_filepath),
         })
     }
 
+    ///
     pub fn set_image_format(self, image_type: &ImageType) -> Self {
         let f: Box<dyn ImfconvHandler> = match image_type {
             ImageType::JPEG => Box::new(JpegHandler),
@@ -102,6 +109,9 @@ impl Imfconv {
         }
     }
 
+    /// Execute the builder.
+    ///
+    /// Returns `()` if the conversion was successful. But returns an `Error` on failure.
     pub fn convert(&self) -> Result<(), Box<dyn Error>> {
         match self
             .format
@@ -113,12 +123,16 @@ impl Imfconv {
     }
 }
 
+/// Image formats available in imfconv
+#[derive(Debug)]
 pub enum ImageType {
     JPEG,
     PNG,
     TIFF,
 }
 
+/// Color profiles available in imfconv
+#[derive(Debug)]
 pub enum ColorProfile {
     RGBA,
     RGB,

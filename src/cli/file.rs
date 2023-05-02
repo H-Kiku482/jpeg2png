@@ -36,7 +36,7 @@ impl CliImfconv for AsFile {
     ) -> Result<(), Box<dyn std::error::Error>> {
         let src_path = Path::new(src);
 
-        // Auto decision destination path by source path.
+        // Decide the destination path from source path.
         let dst_path = if dest == "" {
             Path::new(src)
         } else {
