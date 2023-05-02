@@ -50,7 +50,6 @@ impl ImageColorProfile {
 
 /// execute imfconv for cli
 pub fn run() {
-    // Parse os arguments.
     let command = Command::new(APP_NAME)
         .version(VERSION)
         .author(AUTHOR)
@@ -102,13 +101,13 @@ pub fn run() {
         None => ImageFormat::PNG,
     };
 
-    let format: ImageType = match extension {
+    let format = match extension {
         ImageFormat::JPEG => ImageType::JPEG,
         ImageFormat::TIFF => ImageType::TIFF,
         _ => ImageType::PNG,
     };
 
-    let profile: ColorProfile = match command.get_one::<String>(OsArgsId::COLOR_PROFILE) {
+    let profile = match command.get_one::<String>(OsArgsId::COLOR_PROFILE) {
         Some(p) => match p.as_str() {
             ImageColorProfile::GRAYSCALE => ColorProfile::GRAYSCALE,
             ImageColorProfile::RGB => ColorProfile::RGB,

@@ -48,11 +48,10 @@ impl Imfconv {
             grayscale: false,
             format: Box::new(PngHandler),
             color: Box::new(RgbaColor),
-            dest_path: PathBuf::from(destination_filepath),
+            dest_path: PathBuf::from(destination_file),
         })
     }
 
-    ///
     pub fn set_image_format(self, image_type: &ImageType) -> Self {
         let f: Box<dyn ImfconvHandler> = match image_type {
             ImageType::JPEG => Box::new(JpegHandler),
