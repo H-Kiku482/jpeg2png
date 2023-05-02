@@ -12,6 +12,11 @@ const AUTHOR: &str = "hkiku482 <h.kikuchi482@gmail.com>";
 const ABOUT: &str = "Convert image format.";
 
 trait CliImfconv {
+    /// Image format conversion for file or directory.
+    /// - src: source file or directory path
+    /// - dest: destination file or directory path
+    /// - format: image format after conversion
+    /// - profile: image profile after conversion
     fn exec(
         &self,
         src: &str,
@@ -43,6 +48,7 @@ impl ImageColorProfile {
     const RGBA: &str = "rgba";
 }
 
+/// execute imfconv for cli
 pub fn run() {
     let command = Command::new(APP_NAME)
         .version(VERSION)
@@ -85,7 +91,6 @@ pub fn run() {
         )
         .get_matches();
 
-    // Parse os arguments.
     let source_pathes: Vec<&String> = match command.get_many::<String>(OsArgsId::SOURCE_ITEM_PATH) {
         Some(values) => values.collect(),
         None => return,
@@ -150,7 +155,7 @@ pub fn run() {
 
         match handler.exec(source_path, &output_path, &format, &profile) {
             Ok(_) => continue,
-            Err(e) => eprint!("{}", e),
+            Err(e) => eprint!("{}\n", e),
         };
     }
 }
