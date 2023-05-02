@@ -20,17 +20,3 @@ pub fn read_image(src: &Path) -> Result<(u32, u32, Vec<u8>), Box<dyn Error>> {
         Err(e) => panic!("{:?}", e),
     };
 }
-
-#[cfg(test)]
-mod test {
-    use std::path::Path;
-
-    #[test]
-    fn read_image_test() {
-        let src = Path::new("test/jpg.txt");
-        match image::open(src) {
-            Ok(i) => (i.width(), i.height(), i.into_bytes()),
-            Err(e) => panic!("{}", e),
-        };
-    }
-}

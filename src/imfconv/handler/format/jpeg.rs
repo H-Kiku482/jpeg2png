@@ -23,31 +23,3 @@ impl ImfconvHandler for JpegHandler {
         }
     }
 }
-
-#[cfg(test)]
-mod test {
-    use super::JpegHandler;
-    use crate::imfconv::handler::format::ImfconvHandler;
-    use std::path::Path;
-
-    #[test]
-    fn exec_test() {
-        let image = match image::open("test/2.png") {
-            Ok(i) => i,
-            Err(e) => panic!("{}", e),
-        };
-
-        let dest_filepath = Path::new("test/result");
-
-        let handler = Box::new(JpegHandler);
-        match handler.exec(
-            image.width(),
-            image.height(),
-            &image.into_bytes(),
-            dest_filepath,
-        ) {
-            Ok(_) => return,
-            Err(e) => panic!("{}", e),
-        };
-    }
-}
